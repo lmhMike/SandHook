@@ -94,7 +94,7 @@ bool doHookWithReplacement(JNIEnv* env,
     originMethod->disableInterpreterForO();
     originMethod->disableFastInterpreterForQ();
 
-    SandHook::HookTrampoline* hookTrampoline = trampolineManager.installReplacementTrampoline(originMethod, hookMethod, backupMethod);
+    std::unique_ptr<SandHook::HookTrampoline> hookTrampoline(trampolineManager.installReplacementTrampoline(originMethod, hookMethod, backupMethod));
     if (hookTrampoline != nullptr) {
         originMethod->setQuickCodeEntry(hookTrampoline->replacement->getCode());
         void* entryPointFormInterpreter = hookMethod->getInterpreterCodeEntry();
