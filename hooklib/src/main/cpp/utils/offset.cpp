@@ -56,4 +56,5 @@ namespace SandHook {
         return -1;
     }
 
+    template int Offset::findOffset(void *start, size_t len, size_t step, void* value);
 }
