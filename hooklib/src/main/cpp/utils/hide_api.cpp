@@ -8,6 +8,7 @@
 #include "../includes/utils.h"
 #include "../includes/trampoline_manager.h"
 #include "../includes/art_runtime.h"
+#include "../includes/offset.h"
 
 extern int SDK_INT;
 
@@ -340,19 +341,16 @@ extern "C" {
         backup_update_methods_code(thiz, artMethod, quick_code);
     }
 
-    void MakeInitializedClassVisibilyInitialized(void* self){
+    void MakeInitializedClassVisibilyInitialized(JNIEnv *env, void* self){
         if(make_initialized_classes_visibly_initialized_) {
-#ifdef __LP64__
-            size_t OFFSET_classlinker = 472;
-            if (SDK_INT >= ANDROID_S) {
-                OFFSET_classlinker = 496;
+            JavaVM * javaVm = nullptr;
+            env->GetJavaVM(&javaVm);
+            int javaVm_offset = SandHook::Offset::findOffset(runtime_instance_, 1000, 4, (void *) javaVm);
+            int offset = 3;
+            if (SDK_INT >= ANDROID_SL) {
+                offset = 4;
             }
-#else
-            size_t OFFSET_classlinker = 276;
-            if (SDK_INT >= ANDROID_S) {
-                OFFSET_classlinker = 288;
-            }
-#endif
+            size_t OFFSET_classlinker = javaVm_offset - offset * sizeof(void *);
             void *thiz = *reinterpret_cast<void **>(
                     reinterpret_cast<size_t>(runtime_instance_) + OFFSET_classlinker);
             make_initialized_classes_visibly_initialized_(thiz, self, true);

@@ -414,7 +414,7 @@ extern "C"
 JNIEXPORT void JNICALL
 Java_com_swift_sandhook_SandHook_MakeInitializedClassVisibilyInitialized(JNIEnv *env, jclass clazz,
                                                                          jlong self) {
-    MakeInitializedClassVisibilyInitialized(reinterpret_cast<void*>(self));
+    MakeInitializedClassVisibilyInitialized(env, reinterpret_cast<void*>(self));
 }
 extern "C"
 JNIEXPORT void* findSym(const char *elf, const char *sym_name) {
